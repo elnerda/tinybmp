@@ -49,7 +49,7 @@ der Realwerte benötigt.
 Temperatur wird in Grad=*C berechnet.
 Druck wird in Pascale=Pa berechnet.
 */
-class bmp180
+class tinybmp180
 {
   private:
   uint16_t read16(uint8_t add);
