@@ -1,4 +1,5 @@
 #include "tinybmp.h"
+#include <util/delay.h>
 
 //Konstruktor
 tinybmp180::tinybmp180(){
@@ -113,7 +114,7 @@ Es wird ein uint16_t zurückgegeben
 uint16_t tinybmp180::readRawTemp(){
   write8(bmp_reg,bmp_temperatur_raw);
   
-  delay(30);
+  _delay_ms(5);
   
   return read16(bmp_temp);
 }
@@ -126,7 +127,7 @@ uint32_t tinybmp180::readRawPres(){
   uint32_t temp;
   write8(bmp_reg,bmp_pressure_raw + (oss << 6));
  
-  delay (30);
+  _delay_ms (30);
  
   temp = read16(bmp_pres);
   temp <<= 8;
@@ -145,8 +146,8 @@ Werte mit 8Bit schreiben
 */
 void tinybmp180::write8(uint8_t add, uint8_t data){
   TinyWireM.beginTransmission(bmp_add);
-  TinyWireM.send(add);
-  TinyWireM.send(data);
+  TinyWireM.write(add);
+  TinyWireM.write(data);
   TinyWireM.endTransmission();
 }
 
@@ -156,14 +157,14 @@ Werte mit 16Bit auslesen
 uint16_t tinybmp180::read16(uint8_t add){
   uint16_t temp;
   TinyWireM.beginTransmission(bmp_add);
-  TinyWireM.send(add);
+  TinyWireM.write(add);
   TinyWireM.endTransmission();
   TinyWireM.beginTransmission(bmp_add);
   TinyWireM.requestFrom(bmp_add,2);
-  temp = TinyWireM.receive();
+  temp = TinyWireM.read();
   temp <<= 8;
-  temp |= TinyWireM.receive();
-  TinyWireM.endTransmission();
+  temp |= TinyWireM.read();
+  //TinyWireM.endTransmission();
   
   return temp;
 }
@@ -174,12 +175,12 @@ Werte mit 8Bit auslesen
 uint8_t tinybmp180::read8(uint8_t add){
   uint16_t temp;
   TinyWireM.beginTransmission(bmp_add);
-  TinyWireM.send(add);
+  TinyWireM.write(add);
   TinyWireM.endTransmission();
   TinyWireM.beginTransmission(bmp_add);
-  TinyWireM.requestFrom(bmp_add,2);
-  temp = TinyWireM.receive();
-  TinyWireM.endTransmission();
+  TinyWireM.requestFrom(bmp_add,1);
+  temp = TinyWireM.read();
+  //TinyWireM.endTransmission();
   
   return temp;
 }
